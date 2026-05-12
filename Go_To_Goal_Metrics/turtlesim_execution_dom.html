@@ -1,0 +1,52 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { margin: 0; display: flex; justify-content: center; align-items: center; background: #333; height: 100vh; font-family: sans-serif; }
+            .window { width: 600px; height: 600px; background: #4556FF; border: 4px solid #555; border-radius: 10px; position: relative; overflow: hidden; }
+            .titlebar { background: #555; color: white; padding: 5px 10px; font-size: 14px; font-weight: bold; text-align: center; }
+            canvas { position: absolute; top: 30px; left: 0; }
+            .turtle { width: 40px; height: 40px; position: absolute; transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s; z-index: 10; font-size: 30px; text-align: center; line-height: 40px; }
+        </style>
+    </head>
+    <body>
+        <div class="window">
+            <div class="titlebar">turtlesim - Case C (Best Controller)</div>
+            <canvas id="canvas" width="600" height="570"></canvas>
+            <div class="turtle" id="turtle">🐢</div>
+        </div>
+        <script>
+            const points = [[5.544445, 5.544445], [5.60799, 5.551662], [5.72923, 5.591739], [5.786273, 5.620734], [5.86734, 5.67208], [5.992211, 5.771991], [6.03964, 5.81496], [6.109056, 5.881269], [6.199019, 5.972317], [6.243253, 6.01857], [6.330616, 6.112119], [6.39547, 6.1829], [6.438495, 6.23028], [6.524138, 6.325407], [6.58808, 6.397013], [6.651862, 6.468762], [6.736736, 6.564576], [6.800312, 6.636507], [6.84267, 6.684484], [6.927333, 6.780485], [6.969643, 6.828505], [7.054235, 6.924568], [7.1388, 7.020656], [7.200825, 7.091152], [7.240683, 7.136461], [7.29632, 7.199714], [7.365218, 7.278052], [7.39569, 7.312703], [7.455171, 7.380342], [7.494401, 7.424956], [7.530806, 7.466358], [7.565463, 7.505773], [7.598413, 7.543249], [7.628119, 7.577034], [7.656321, 7.609108], [7.689991, 7.647404], [7.712312, 7.672791], [7.733025, 7.69635], [7.759152, 7.726065], [7.776493, 7.745789], [7.792586, 7.764092], [7.802542, 7.775415], [7.821736, 7.797247], [7.834571, 7.811845], [7.846482, 7.825393], [7.857821, 7.838289], [7.871743, 7.854123], [7.877899, 7.861125], [7.889916, 7.874794], [7.8952, 7.880803], [7.905388, 7.89239], [7.9122, 7.900138], [7.918522, 7.907328], [7.92454, 7.914173], [7.931929, 7.922577], [7.93683, 7.928151]];
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const turtle = document.getElementById('turtle');
+            
+            // Turtlesim coordinate system is typically 0 to 11.08, origin bottom-left
+            function scale(p) {
+                const x = (p[0] / 11.08) * 600;
+                const y = 570 - ((p[1] / 11.08) * 570);
+                return [x, y];
+            }
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            
+            if(points.length > 0) {
+                let start = scale(points[0]);
+                ctx.moveTo(start[0], start[1]);
+                for(let i=1; i<points.length; i++) {
+                    let p = scale(points[i]);
+                    ctx.lineTo(p[0], p[1]);
+                }
+                ctx.stroke();
+                
+                let end = scale(points[points.length-1]);
+                turtle.style.left = end[0] + 'px';
+                turtle.style.top = (end[1] + 30) + 'px';
+            }
+        </script>
+    </body>
+    </html>
+    
