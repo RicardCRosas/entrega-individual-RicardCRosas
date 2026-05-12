@@ -87,16 +87,7 @@ class TurtleGoToGoalMetrics(Node):
         )
 
         if self.reset_turtlesim:
-            self.call_reset_service()
-
-    def call_reset_service(self):
-        client = self.create_client(Empty, '/reset')
-        while not client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Service /reset not available, waiting...')
-        
-        request = Empty.Request()
-        client.call_async(request)
-        self.get_logger().info('Turtlesim reset request sent.')
+            self.get_logger().info('Reset requested via parameter, but it should be handled externally for better sync.')
 
     def pose_callback(self, msg: Pose):
         self.current_pose = msg
@@ -206,6 +197,9 @@ class TurtleGoToGoalMetrics(Node):
             self.save_csv()
             if self.create_plots:
                 self.save_plots()
+            
+            # Shutdown the node after finishing the task
+            raise SystemExit
             return
 
         msg = Twist()
@@ -301,6 +295,23 @@ class TurtleGoToGoalMetrics(Node):
         plt.grid(True)
         path_angular = os.path.join(self.output_dir, f'{self.case_name}_angular_velocity.png')
         plt.savefig(path_angular, dpi=150, bbox_inches='tight')
+        plt.close()
+
+        # Trajectory plot (X vs Y)
+        plt.figure()
+        x_pos = [s.x for s in self.samples]
+        y_pos = [s.y for s in self.samples]
+        plt.plot(x_pos, y_pos, 'b-', label='Trayectoria')
+        plt.plot(x_pos[0], y_pos[0], 'go', label='Inicio')
+        plt.plot(self.x_goal, self.y_goal, 'rx', label='Meta')
+        plt.xlabel('X [m]')
+        plt.ylabel('Y [m]')
+        plt.title(f'Trayectoria del Robot - {self.case_name}')
+        plt.legend()
+        plt.grid(True)
+        plt.axis('equal')
+        path_trajectory = os.path.join(self.output_dir, f'{self.case_name}_trajectory.png')
+        plt.savefig(path_trajectory, dpi=150, bbox_inches='tight')
         plt.close()
 
         self.get_logger().info(f'Plots saved in: {self.output_dir}')
